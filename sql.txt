@@ -1,0 +1,39 @@
+--查询班级绑定手机数量
+select grade,major,class,count(*) from user where phone<>'' group by grade,major,class order by count(*) desc;
+
+--查询班级绑定人数
+select grade,major,class,count(*) from user group by grade,major,class order by count(*) desc;
+
+--当天查询次数
+select count(*) from log where to_days(time) = to_days(now());
+
+--专业人数
+select major,count(*) from user group by major order by count(*) desc;
+
+--姓氏人数
+select left(full_name,1),count(*) from user group by left(full_name,1) order by count(*) desc;
+
+--同生日人数
+select right(birthday,5),count(*) from user group by  right(birthday,5);
+
+--弱密码人数
+select count(*) from user where stu_id=stu_pw;
+
+--信息系统无法获取人数
+select count(*) from user where isnull(mis_id);
+
+--县级市区人数
+select left(idNum,6),count(*) from user group by left(idNum,6);
+
+--地级市人数
+select left(idNum,4),count(*) from user group by left(idNum,4);
+
+--省份人数
+select left(idNum,2),count(*) from user group by left(idNum,2);
+
+--详细查询日志
+select time,grade,major,class,full_name,stu_id,action,wx_id from user,log where user.stu_id=log.user
+
+--用户当天活跃度
+select grade,major,class,full_name,stu_id,wx_id,count(*) from user,log where user.stu_id=log.user and to_days(time) = to_days(now()) group by stu_id order by count(*) desc;
+

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html ng-app="App">
+
+<head>
+    <meta charset="utf-8">
+    <title> </title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <link href="http://cdn.bootcss.com/ionic/1.3.2/css/ionic.min.css" rel="stylesheet">
+    <style type="text/css">
+    	.popup-css .popup{
+    		border-radius:5px;
+    		width: 80%;
+    	}
+    </style>
+    <script src="http://cdn.bootcss.com/ionic/1.3.2/js/ionic.bundle.min.js"></script>
+
+    <script>
+
+    var isArray = function(obj) { 
+	return Object.prototype.toString.call(obj) === '[object Array]'; 
+	}
+
+var app = angular.module('App', ['ionic']);
+
+	app.config(function($stateProvider, $urlRouterProvider) {
+		$stateProvider.state('index', {
+                url: "/",
+                templateUrl: "home.html"
+        })
+
+        $urlRouterProvider.otherwise("/");
+
+    });
+
+    app.controller('PageCtrl', function($scope, $http, $ionicPopup) {
+
+    		$scope.page = 1;
+    		$scope.items = [];
+    		$scope.canLoad = true;
+    		$scope.keyword = '';
+
+    		$scope.loadMore = function() {
+
+            $http.get('../lost_found.php?keyword=' + $scope.keyword + '&page=' + $scope.page).success(function(items) {
+
+                $scope.items = $scope.items.concat(items);
+
+                if (isArray(items) && items.length >= 10) {
+                	$scope.page = $scope.page + 1;
+                    
+                } else {
+                    $scope.canLoad = false;
+                }
+
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+
+            });
+        };
+
+        $scope.search = function() {
+            $scope.items = [];
+            $scope.page = 1;
+            $scope.canLoad = true;
+            $scope.pic = 'pic.png';
+            $scope.des = '';
+            $scope.found = false;
+
+            $scope.loadMore();
+        };
+
+	    $scope.submit = function() {
+	    	alert($scope.des);
+	        $http.post('../lost_found.php', {
+                type:$scope.found,
+                des:$scope.des,
+                pic:$scope.pic
+            }).success(function(){
+            	$scope.items = [];
+            	$scope.page = 1;
+            	$scope.keyword = '';
+            	$scope.canLoad = true;
+            	$scope.loadMore();
+            });
+        };
+
+
+
+    		$scope.getPic = function(file){
+    			var data = file.files[0]; 
+    			var reader = new FileReader(); 
+    			reader.readAsDataURL(data);
+    			reader.onload = function(e){
+    				//alert(this.result);
+    				//$scope.pic = this.result;
+    				pic.src = this.result;
+    			}
+    			
+    		};
+
+            $scope.showPopup = function() {
+                //$scope.data = {}
+                
+
+                var myPopup = $ionicPopup.show({
+                	cssClass:'popup-css',
+                    template: '<div class="list"><ion-toggle ng-model="found" ng-checked="found"><span ng-if="found">拾获</span><span ng-if="!found">丢失</span></ion-toggle><div class="item"><textarea placeholder="物品描述 时间地点 联系方式" rows=3 ng-model="des"></textarea></div><div class="item" style="text-align: center;"><img id="pic" ng-src="{{ pic }}" height="120px" onclick="file.click()"></div></div><input type="file" ng-model="file" id="file" onchange="angular.element(this).scope().getPic(this)" style="visibility: hidden; position: absolute;" />',
+                    title: '发布失物招领',
+                    //subTitle: 'Please use normal things',
+                    scope: $scope,
+                    buttons: [{
+                        text: '关闭',
+                        onTap: function(e) {
+                        	//myPopup.close();
+                        }
+                    }, {
+                        text: '<b>发布</b>',
+                        type: 'button-positive',
+                        onTap: function(e) {
+                        	$scope.submit();
+                        }
+                    }, ]
+                });
+                myPopup.then(function(res) {
+                    //console.log('Tapped!', res);
+                });
+
+            };
+
+        });
+        
+</script>
+
+</head>
+
+
+<body ng-controller="PageCtrl">
+
+<ion-nav-view></ion-nav-view>
+
+    <script id="home.html" type="text/ng-template">
+        <ion-view view-title="至诚失物招领">
+            <div class="bar bar-header item-input-inset">
+                <label class="item-input-wrapper">
+                    <i class="icon ion-ios-search placeholder-icon"></i>
+                    <input type="search" placeholder="关键词" ng-model="keyword">
+                </label>
+                <button class="button" ng-click="search()">
+                    搜索
+                </button>
+            </div>
+            <div class="tabs tabs-positive tabs-icon-left">
+                <a class="tab-item" href="#" ng-click="showPopup()">
+                    <i class="ion-plus-circled"></i> 发布
+                </a>
+            </div>
+            <ion-content style="padding-top:44px">
+             <ion-list>
+
+			    <a class="item item-thumbnail-left item-text-wrap" href="#" ng-repeat="item in items">
+			      <img src="{{ item.pic }}">
+			      
+			      <p>{{ item.des }}</p>
+			      <p>{{ item.time }}</p>
+			    </a>
+
+			 </ion-list>
+			<ion-infinite-scroll on-infinite="loadMore()" ng-if="canLoad" distance="1%"> </ion-infinite-scroll>
+			</ion-content>
+        </ion-view>
+    </script>
+</body>
+
+</html>

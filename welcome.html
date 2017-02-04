@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>欢迎关注</title>
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="http://www.yun-li.com/wx/js.config.php"></script>
+<script>
+wx.ready(function(){
+	wx.hideAllNonBaseMenuItem();
+	wx.showMenuItems({
+    menuList: [
+    	'menuItem:addContact',
+    	'menuItem:share:appMessage',
+    	'menuItem:share:timeline',
+    	'menuItem:copyUrl',
+
+    ] // 要显示的菜单项，所有menu项见附录3
+	});
+});
+</script>
+
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container"> <a href="index.html"><img src="img/logo.png"></a>
+  </div>
+</nav>
+
+<div class="container">
+
+<div class="text-center" style="margin-top:20px;"><img src="img/qrcode.jpg" width="80%"></div>
+<div class="text-center" style="color:#CCC;">按住二维码识别关注</div>
+<div class="text-center" style="margin-top:5px;">微信关注 “微至诚” </div>
+<div class="text-center">至诚最好用的微信公众平台</div>
+</div>
+
+<div class="text-center" style="color:#CCC; margin:10px;"><small>Copyright &copy; 云力网络科技 All Rights Reserved</small></div>
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!-- By:Blue zzx094@gmail.com -->
+</body>
+</html>
